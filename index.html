@@ -236,7 +236,14 @@ select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(
 @keyframes sp-zoom{from{transform:scale(1.08)}}
 /* lineup */
 .lu{display:flex;flex-direction:column;gap:8px}
-.lrow{display:grid;grid-template-columns:22px minmax(0,1fr) 78px 34px 34px 30px;gap:6px;align-items:center}
+.lrow{display:grid;grid-template-columns:20px minmax(0,1fr) 72px 34px 26px;gap:6px;align-items:center}
+.lrow select{padding-left:9px}
+.mv{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--surface)}
+.mv button{height:21px;border:0;background:transparent;color:var(--ink);display:grid;place-items:center;padding:0}
+.mv button+button{border-top:1px solid var(--line)}
+.mv button svg{width:16px;height:16px}
+.mv button:disabled{opacity:.25}
+.mv button:active{background:var(--surface2)}
 .lrow .o{font-weight:800;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
 .lrow.cur .o{color:var(--seam)}
 .sb34{width:34px;height:40px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:9px;display:grid;place-items:center;padding:0}
@@ -348,7 +355,7 @@ textarea{min-height:240px;font:12.5px/1.55 ui-monospace,Menlo,"Roboto Mono",mono
   .tv-side{grid-template-columns:1fr;justify-items:start}
   .tv-side .tv-row{display:flex;gap:4vmin;align-items:center}
 }
-@media (max-width:370px){.lrow{grid-template-columns:20px minmax(0,1fr) 66px 30px 30px 26px;gap:5px}.rg{grid-template-columns:repeat(3,1fr)}.pb{font-size:15px}}
+@media (max-width:370px){.lrow{grid-template-columns:18px minmax(0,1fr) 64px 32px 24px;gap:5px}.rg{grid-template-columns:repeat(3,1fr)}.pb{font-size:15px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -754,7 +761,7 @@ function vPrep(g){
     <div class="lu">${g.lineup.map((l,i)=>`<div class="lrow ${g.status==='live'&&i===curSlot?'cur':''}"><span class="o">${i+1}</span>
       <select id="ls-${i}" data-lslot="${i}" aria-label="${i+1}번 타자">${rosterOpts(l.pid,'선수 선택')}</select>
       <select id="lp-${i}" data-lpos="${i}" aria-label="${i+1}번 수비">${posOpts(l.pos||'')}</select>
-      <button class="sb34" data-mv="${i},-1" aria-label="위로" ${i===0?'disabled':''}>${I.up}</button><button class="sb34" data-mv="${i},1" aria-label="아래로" ${i===g.lineup.length-1?'disabled':''}>${I.down}</button>
+      <div class="mv"><button data-mv="${i},-1" aria-label="${i+1}번 위로" ${i===0?'disabled':''}>${I.up}</button><button data-mv="${i},1" aria-label="${i+1}번 아래로" ${i===g.lineup.length-1?'disabled':''}>${I.down}</button></div>
       <button class="xb" data-lrm="${i}" aria-label="${i+1}번 빼기">${I.x}</button></div>`).join('')}</div>
     <div class="row"><button class="chipbtn" data-act="lineAdd">+ 타자 추가</button>${g.lineup.length?'':'<button class="chipbtn" data-act="lineFill">명단 전원 넣기</button>'}</div>
     <p class="hint">빨간 번호가 다음 타자예요. 선수를 바꾸면 그 자리에 교체로 들어가고, 앞선 타석 기록은 원래 선수에게 남아요.</p></section>`;
