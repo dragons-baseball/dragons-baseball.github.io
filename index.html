@@ -264,9 +264,14 @@ table.sb tr.tot td{font-weight:800;background:var(--bg)}
 table.sb small{color:var(--muted);font-weight:500}
 
 /* roster */
-.rrow{display:grid;grid-template-columns:minmax(0,1fr) 84px 52px 30px;gap:8px;align-items:center}
+.rrow{display:grid;grid-template-columns:minmax(0,1fr) 68px 78px 30px;gap:6px;align-items:center}
+.rhead{font-size:11.5px;color:var(--muted);font-weight:600}
+.gsum{display:flex;gap:6px;flex-wrap:wrap}
+.gsum span{font-size:12px;font-weight:700;color:var(--muted);background:var(--surface2);border-radius:999px;padding:3px 9px;font-variant-numeric:tabular-nums}
 .rrow .avg{font-size:13px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
-.addrow{display:grid;grid-template-columns:minmax(0,1fr) 84px auto;gap:8px}
+.addrow{display:grid;grid-template-columns:minmax(0,1fr) 68px 78px auto;gap:6px}
+.addrow .btn{padding:10px 12px}
+.grade{font-size:11.5px;color:var(--muted);font-weight:600;margin-left:4px}
 
 /* share */
 .seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:3px;background:var(--surface2);border-radius:11px;padding:3px}
@@ -296,6 +301,7 @@ textarea{min-height:240px;font:12.5px/1.55 ui-monospace,Menlo,"Roboto Mono",mono
 .menu button.danger svg{color:var(--out)}
 .pick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .pick button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:12px;text-align:left;font-size:15px;font-weight:700;display:flex;justify-content:space-between;gap:6px}
+.pick button span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pick button small{color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
 @keyframes up{from{transform:translateY(40px);opacity:.4}}
 @keyframes fade{from{opacity:0}}
@@ -417,7 +423,7 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 let D=null;
 const TEAM_DEFAULT='수지드래곤즈';
 function defaults(){return {v:3,team:TEAM_DEFAULT,innings:6,limit:75,roster:[],games:[],example:false}}
-function seedRoster(){return [['김도윤','SS'],['이준서','CF'],['박시우','P'],['최하준','C'],['정예준','1B'],['강지호','3B'],['윤은우','LF'],['조서진','2B'],['임건우','RF']].map(([name,pos])=>({id:uid(),name,pos}))}
+function seedRoster(){return [['김도윤','SS','초6'],['이준서','CF','초6'],['박시우','P','초5'],['최하준','C','초6'],['정예준','1B','초5'],['강지호','3B','초5'],['윤은우','LF','초4'],['조서진','2B','초4'],['임건우','RF','초3']].map(([name,pos,grade])=>({grade,id:uid(),name,pos}))}
 const blankApp=(inn,pid,name)=>({inn,pid:pid||'',name:name||'',pc:0,st:0,bl:0,bf:0,k:0,bb:0,h:0,r:0,outs:0});
 function newGame(o={}){return {id:uid(),created:Date.now(),date:o.date||today(),place:o.place||'',opp:o.opp||'상대팀',first:o.first!==false,
   innings:+o.innings||D.innings||6,limit:+o.limit||D.limit||75,status:'live',lineup:[],idx:0,plan:[],apps:[],
@@ -558,8 +564,11 @@ const seqText=s=>{s=(s||'').replace(/X$/,'');return s?[...s].map(c=>SEQ[c]||c).j
 const dots=(n,max,cls)=>[...Array(max)].map((_,i)=>`<i class="dot ${cls} ${i<n?'on':''}"></i>`).join('');
 const chipCls=c=>RES[c].g==='hit'?'hit':RES[c].g==='on'?'on':'out';
 const mmdd=d=>{const m=String(d||'').split('-');return m.length===3?`${+m[1]}.${+m[2]}`:d};
-const rosterOpts=(sel,blank='선택 안 함')=>`<option value="">${blank}</option>`+D.roster.filter(p=>!p.gone||p.id===sel).map(p=>`<option value="${p.id}" ${p.id===sel?'selected':''}>${esc(p.name)}</option>`).join('');
-const posOpts=sel=>POS.map(p=>`<option value="${p}" ${p===sel?'selected':''}>${POSK[p]}</option>`).join('');
+const rosterOpts=(sel,blank='선택 안 함')=>`<option value="">${blank}</option>`+D.roster.filter(p=>!p.gone||p.id===sel).map(p=>`<option value="${p.id}" ${p.id===sel?'selected':''}>${esc(p.name)}${p.grade?` (${p.grade})`:''}</option>`).join('');
+const GRADES=['','초1','초2','초3','초4','초5','초6','중1','중2','중3'];
+const gradeOpts=sel=>GRADES.map(x=>`<option value="${x}" ${x===(sel||'')?'selected':''}>${x||'학년'}</option>`).join('');
+const gtag=p=>p&&p.grade?`<span class="grade">${p.grade}</span>`:'';
+const posOpts=(sel,blank)=>POS.map(p=>`<option value="${p}" ${p===sel?'selected':''}>${p===''&&blank?blank:POSK[p]}</option>`).join('');
 
 /* ---------- stats ---------- */
 function batStats(){const m={};const z=()=>({g:0,pa:0,ab:0,h:0,d:0,t:0,hr:0,bb:0,hbp:0,k:0,rbi:0});
@@ -604,24 +613,30 @@ function vHome(){
   <button class="fab" data-act="newGame">${I.plus}<span>새 경기</span></button>`;
 }
 
+function gsum(list){
+  const c={};list.forEach(p=>{const k=p.grade||'미정';c[k]=(c[k]||0)+1});
+  const keys=[...GRADES.slice(1).reverse(),'미정'].filter(k=>c[k]);
+  if(!list.length)return '';
+  return `<div class="row" style="justify-content:space-between"><div class="gsum">${keys.map(k=>`<span>${k} ${c[k]}명</span>`).join('')}</div>${list.some(p=>p.grade)?'<button class="chipbtn sm" data-act="gradeUpAsk">학년 올리기</button>':''}</div>`;
+}
 function vPlayers(){
   const bs=batStats(),ps=pitStats(),list=players();
   let body='';
   if(R.ptab==='roster'){
     body=`<section class="card">
-      <div class="addrow"><input id="newName" placeholder="선수 이름" enterkeyhint="done" autocomplete="off"><select id="newPos" aria-label="수비 위치">${posOpts('')}</select><button class="btn" data-act="addPlayer">추가</button></div>
-      <div class="lu">${list.length?list.map(p=>`<div class="rrow"><input id="pn-${p.id}" data-pname="${p.id}" value="${esc(p.name)}" aria-label="이름"><select id="pp-${p.id}" data-ppos="${p.id}" aria-label="수비 위치">${posOpts(p.pos||'')}</select><span class="avg">${bs[p.id]?fmtAvg(bs[p.id].h,bs[p.id].ab):'-'}</span><button class="xb" data-pdel="${p.id}" aria-label="${esc(p.name)} 삭제">${I.trash}</button></div>`).join('')
+      <div class="addrow"><input id="newName" placeholder="선수 이름" enterkeyhint="done" autocomplete="off"><select id="newGrade" aria-label="학년">${gradeOpts(R.lastGrade||'')}</select><select id="newPos" aria-label="수비 위치">${posOpts('','수비')}</select><button class="btn" data-act="addPlayer">추가</button></div>
+      ${gsum(list)}<div class="lu">${list.length?`<div class="rrow rhead"><span>이름</span><span>학년</span><span>수비</span><span></span></div>`+list.map(p=>`<div class="rrow"><input id="pn-${p.id}" data-pname="${p.id}" value="${esc(p.name)}" aria-label="이름"><select id="pg-${p.id}" data-pgrade="${p.id}" aria-label="${esc(p.name)} 학년">${gradeOpts(p.grade)}</select><select id="pp-${p.id}" data-ppos="${p.id}" aria-label="수비 위치">${posOpts(p.pos||'')}</select><button class="xb" data-pdel="${p.id}" aria-label="${esc(p.name)} 삭제">${I.trash}</button></div>`).join('')
         :`<div class="empty"><b>등록된 선수가 없어요</b><span class="hint">위에서 이름을 입력하고 추가를 누르세요.</span></div>`}</div>
-      <p class="hint">명단은 모든 경기에서 함께 써요. 이름이 같은 아이가 있으면 ‘민준A’처럼 구분해 주세요. 오른쪽 숫자는 시즌 타율이에요.</p></section>`;
+      <p class="hint">명단은 모든 경기에서 함께 써요. 이름이 같은 아이가 있으면 ‘민준A’처럼 구분해 주세요. 학년은 새 시즌에 한 번에 올릴 수 있어요.</p></section>`;
   }else if(R.ptab==='bat'){
     const rows=list.map(p=>({p,s:bs[p.id]})).filter(x=>x.s);
-    body=rows.length?`<div class="tw"><table class="sb"><thead><tr><th class="nm">이름</th><th>타율</th><th>출루율</th><th>경기</th><th>타석</th><th>타수</th><th>안타</th><th>2루타</th><th>3루타</th><th>홈런</th><th>타점</th><th>볼넷</th><th>사구</th><th>삼진</th></tr></thead><tbody>
-      ${rows.map(({p,s})=>`<tr><td class="nm">${esc(p.name)}</td><td><b>${fmtAvg(s.h,s.ab)}</b></td><td>${obp(s)}</td><td>${s.g}</td><td>${s.pa}</td><td>${s.ab}</td><td>${s.h}</td><td>${s.d}</td><td>${s.t}</td><td>${s.hr}</td><td>${s.rbi}</td><td>${s.bb}</td><td>${s.hbp}</td><td>${s.k}</td></tr>`).join('')}</tbody></table></div><p class="hint">진행 중인 경기를 포함한 모든 경기의 합계예요. 표는 옆으로 밀어서 볼 수 있어요.</p>`
+    body=rows.length?`<div class="tw"><table class="sb"><thead><tr><th class="nm">이름</th><th>학년</th><th>타율</th><th>출루율</th><th>경기</th><th>타석</th><th>타수</th><th>안타</th><th>2루타</th><th>3루타</th><th>홈런</th><th>타점</th><th>볼넷</th><th>사구</th><th>삼진</th></tr></thead><tbody>
+      ${rows.map(({p,s})=>`<tr><td class="nm">${esc(p.name)}</td><td>${p.grade||'-'}</td><td><b>${fmtAvg(s.h,s.ab)}</b></td><td>${obp(s)}</td><td>${s.g}</td><td>${s.pa}</td><td>${s.ab}</td><td>${s.h}</td><td>${s.d}</td><td>${s.t}</td><td>${s.hr}</td><td>${s.rbi}</td><td>${s.bb}</td><td>${s.hbp}</td><td>${s.k}</td></tr>`).join('')}</tbody></table></div><p class="hint">진행 중인 경기를 포함한 모든 경기의 합계예요. 표는 옆으로 밀어서 볼 수 있어요.</p>`
       :`<div class="card empty"><b>아직 타격 기록이 없어요</b><span class="hint">경기를 기록하면 선수별 시즌 성적이 여기에 모여요.</span></div>`;
   }else{
     const rows=list.map(p=>({p,s:ps[p.id]})).filter(x=>x.s);
-    body=rows.length?`<div class="tw"><table class="sb"><thead><tr><th class="nm">이름</th><th>등판</th><th>이닝</th><th>투구수</th><th>S%</th><th>상대</th><th>피안타</th><th>볼넷</th><th>삼진</th><th>실점</th></tr></thead><tbody>
-      ${rows.map(({p,s})=>`<tr><td class="nm">${esc(p.name)}</td><td>${s.g.size}</td><td>${fmtIP(s.outs)}</td><td>${s.pc}</td><td>${stPct(s)}</td><td>${s.bf}</td><td>${s.h}</td><td>${s.bb}</td><td>${s.k}</td><td>${s.r}</td></tr>`).join('')}</tbody></table></div><p class="hint">S%는 전체 투구 중 스트라이크(파울·인플레이 포함) 비율이에요.</p>`
+    body=rows.length?`<div class="tw"><table class="sb"><thead><tr><th class="nm">이름</th><th>학년</th><th>등판</th><th>이닝</th><th>투구수</th><th>S%</th><th>상대</th><th>피안타</th><th>볼넷</th><th>삼진</th><th>실점</th></tr></thead><tbody>
+      ${rows.map(({p,s})=>`<tr><td class="nm">${esc(p.name)}</td><td>${p.grade||'-'}</td><td>${s.g.size}</td><td>${fmtIP(s.outs)}</td><td>${s.pc}</td><td>${stPct(s)}</td><td>${s.bf}</td><td>${s.h}</td><td>${s.bb}</td><td>${s.k}</td><td>${s.r}</td></tr>`).join('')}</tbody></table></div><p class="hint">S%는 전체 투구 중 스트라이크(파울·인플레이 포함) 비율이에요.</p>`
       :`<div class="card empty"><b>아직 투구 기록이 없어요</b><span class="hint">수비 이닝을 기록하면 아이별 투구수와 이닝이 쌓여요.</span></div>`;
   }
   return appTop(`<div class="ttl"><small>${esc(D.team)}</small><b>선수</b></div>`,`<div class="tabs" role="tablist">${[['roster','명단'],['bat','타격'],['pit','투구']].map(([k,l])=>`<button role="tab" data-ptab="${k}" aria-selected="${R.ptab===k}">${l}</button>`).join('')}</div>`)
@@ -794,9 +809,9 @@ function exportPbp(g){
 function exportTsv(g){
   const T=(...a)=>a.join('\t')+'\n';
   let s=T('[경기]',g.date,g.place,D.team,tot(g,'us'),g.opp,tot(g,'opp'),g.status==='final'?WL[outcome(g)]:'진행 중');
-  s+='\n'+T('[타자 기록]')+T('타순','이름','수비','타석','타수','안타','2루타','3루타','홈런','타점','볼넷','사구','삼진');
+  s+='\n'+T('[타자 기록]')+T('타순','이름','학년','수비','타석','타수','안타','2루타','3루타','홈런','타점','볼넷','사구','삼진');
   g.lineup.forEach((l,i)=>{const pas=g.pa.filter(x=>x.pid===l.pid),c=k=>pas.filter(x=>x.c===k).length;
-    s+=T(i+1,pname(l.pid),POSK[l.pos||''],pas.length,pas.filter(x=>RES[x.c].ab).length,pas.filter(x=>RES[x.c].hit).length,c('2B'),c('3B'),c('HR'),pas.reduce((a,x)=>a+(x.rbi||0),0),c('BB'),c('HBP'),c('K'))});
+    s+=T(i+1,pname(l.pid),P(l.pid)?.grade||'',POSK[l.pos||''],pas.length,pas.filter(x=>RES[x.c].ab).length,pas.filter(x=>RES[x.c].hit).length,c('2B'),c('3B'),c('HR'),pas.reduce((a,x)=>a+(x.rbi||0),0),c('BB'),c('HBP'),c('K'))});
   s+='\n'+T('[투수 기록]')+T('이닝','투수','투구수','스트라이크','볼','S%','아웃','상대타자','피안타','볼넷','삼진','실점');
   g.apps.filter(a=>a.bf||a.pc).forEach(a=>s+=T(a.inn,appName(a),a.pc,a.st||0,a.bl||0,stPct(a),a.outs||0,a.bf,a.h,a.bb,a.k,a.r));
   s+='\n'+T('[타석별 기록]')+T('이닝','공수','타자','투수','투구','결과','득점','아웃','우리','상대');
@@ -841,7 +856,7 @@ function vSheet(){
       ${GROUPS.map(([tt,codes])=>`<div class="grp"><div class="eyebrow">${tt}</div><div class="rg">${codes.map(c=>`<button class="rb ${RES[c].g}" data-res="${c}">${RES[c].l}</button>`).join('')}</div></div>`).join('')}`;
   }else if(t==='relief'&&g){
     b=`<div class="sh-h"><b>투수 교체</b><span>${g.inning}회 · 지금 ${esc(appName(curApp(g)))}</span></div>
-      <div class="pick">${players().map(p=>`<button data-relief="${p.id}">${esc(p.name)}<small>${kidPitches(g,p.id)}구</small></button>`).join('')}</div>
+      <div class="pick">${players().map(p=>`<button data-relief="${p.id}"><span>${esc(p.name)}${gtag(p)}</span><small>${kidPitches(g,p.id)}구</small></button>`).join('')}</div>
       <p class="hint">오른쪽 숫자는 오늘 누적 투구수예요.</p>`;
   }else if(t==='more'&&g){
     b=`<div class="menu">
@@ -976,9 +991,10 @@ document.addEventListener('click',e=>{
     case 'reopen':snap(g);g.status='live';closeSheet();R.tab='live';commit(g,'경기를 다시 진행해요',true);return;
     case 'delAsk':confirmSheet('delGame','이 경기를 삭제할까요?',`vs ${g.opp} (${g.date}) 기록이 모두 지워지고 되돌릴 수 없어요.`,'삭제',true);return;
     case 'wipeAsk':confirmSheet('wipe','모든 기록을 지울까요?','경기와 선수 명단이 모두 지워지고 되돌릴 수 없어요. 먼저 백업 파일을 만들어 두는 걸 권해요.','모두 지우기',true);return;
-    case 'addPlayer':{const n=document.getElementById('newName'),pp=document.getElementById('newPos'),name=n.value.trim();if(!name){n.focus();snack('이름을 입력해 주세요');return}
+    case 'gradeUpAsk':confirmSheet('gradeUp','모든 선수의 학년을 한 칸 올릴까요?','새 시즌용이에요. 초6은 중1, 중3은 그대로 두고 나머지는 한 학년씩 올라가요. 지난 경기 기록은 바뀌지 않아요.','학년 올리기');return;
+    case 'addPlayer':{const n=document.getElementById('newName'),pp=document.getElementById('newPos'),gg=document.getElementById('newGrade'),name=n.value.trim();if(!name){n.focus();snack('이름을 입력해 주세요');return}
       if(players().some(p=>p.name===name)){snack('같은 이름이 있어요. ‘민준A’처럼 구분해 주세요');return}
-      D.roster.push({id:uid(),name,pos:pp.value});D.example=false;save();render();const n2=document.getElementById('newName');if(n2)n2.focus();snack(`${name} 선수를 추가했어요`);return}
+      R.lastGrade=gg.value;D.roster.push({id:uid(),name,pos:pp.value,grade:gg.value});D.example=false;save();render();const n2=document.getElementById('newName');if(n2)n2.focus();snack(`${name} 선수를 추가했어요`);return}
     case 'copy':{const ta=document.getElementById('exp'),txt=ta.value;try{navigator.clipboard.writeText(txt).then(()=>snack('복사했어요'),()=>{ta.focus();ta.select();snack('선택됐어요. 길게 눌러 복사하세요')})}catch(err){ta.focus();ta.select();snack('선택됐어요. 길게 눌러 복사하세요')}return}
     case 'file':{const csv=R.exp==='tsv',txt=exportCur(g),body=csv?'﻿'+txt.split('\n').map(l=>l.split('\t').map(c=>/[",]/.test(c)?`"${c.replace(/"/g,'""')}"`:c).join(',')).join('\n'):txt;
       shareFile(makeFile(`${g.date}_${D.team}_vs_${g.opp}_${{sum:'요약',pbp:'세부기록',tsv:'기록표'}[R.exp]}.${csv?'csv':'txt'}`,body,csv?'text/csv':'text/plain'));return}
@@ -990,6 +1006,7 @@ function doConfirm(kind){
   const g=G();
   if(kind==='endGame'){snap(g);g.status='final';closeSheet();closeTv();R.tab='sheet';commit(g,`경기 종료 · ${WL[outcome(g)]}`,true);return}
   if(kind==='delGame'){const id=g.id;D.games=D.games.filter(x=>x.id!==id);save();goHome();snack('경기를 삭제했어요');return}
+  if(kind==='gradeUp'){players().forEach(p=>{const i=GRADES.indexOf(p.grade||'');if(i>0&&i<GRADES.length-1)p.grade=GRADES[i+1]});save();closeSheet();snack('학년을 한 칸씩 올렸어요');return}
   if(kind==='delPlayer'){const p=P(R.sd.pid);if(p){if(D.games.some(x=>x.pa.some(y=>y.pid===p.id)||x.apps.some(y=>y.pid===p.id)||x.lineup.some(y=>y.pid===p.id)))p.gone=true;else D.roster=D.roster.filter(x=>x.id!==p.id)}D.example=false;save();closeSheet();snack('명단에서 뺐어요');return}
   if(kind==='wipe'){const team=D.team;D=defaults();D.team=team;save();hist.length=0;closeSheet();setR({screen:'home'});snack('모든 기록을 지웠어요');return}
   if(kind==='import'&&pendingImport){D=pendingImport;pendingImport=null;save();hist.length=0;closeSheet();setR({screen:'home'});snack('백업을 불러왔어요');return}
@@ -1015,6 +1032,7 @@ function onField(e){
   if(d.set){D[d.set]=d.set==='team'?el.value:(+el.value||0);save();return}
   if(d.pname){const p=P(d.pname);if(p){p.name=el.value;D.example=false;save()}return}
   if(d.ppos){const p=P(d.ppos);if(p){p.pos=el.value;save()}return}
+  if(d.pgrade){const p=P(d.pgrade);if(p){p.grade=el.value;save();if(e.type==='change')render()}return}
   if(e.type!=='change')return;
   if(d.lslot!==undefined&&g){snap(g);const i=+d.lslot;g.lineup[i].pid=el.value;const p=P(el.value);if(p&&!g.lineup[i].pos)g.lineup[i].pos=p.pos||'';save();render();return}
   if(d.lpos!==undefined&&g){g.lineup[+d.lpos].pos=el.value;save();return}
