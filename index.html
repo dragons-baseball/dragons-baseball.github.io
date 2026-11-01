@@ -207,29 +207,33 @@ select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(
 .ps.now{border-color:var(--seam);background:var(--seam-soft)}
 .ps.now span{color:var(--seam)}
 .ps.done{opacity:.55}
-/* splash — a night-game look, fixed colors in both themes */
-#splash{position:fixed;inset:0;z-index:100;overflow:hidden;background:radial-gradient(120% 70% at 50% 0%,#2a6a47 0%,#123524 45%,#07170f 100%);color:#f3f6ef;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s ease,transform .4s ease}
-#splash.out{opacity:0;transform:scale(1.04);pointer-events:none}
-.sp-lights{position:absolute;inset:-20% -10% auto;height:70%;background:
-  radial-gradient(closest-side,rgba(255,244,200,.35),transparent) 12% 0/38% 60% no-repeat,
-  radial-gradient(closest-side,rgba(255,244,200,.35),transparent) 88% 0/38% 60% no-repeat;filter:blur(6px);animation:sp-glow 1.6s ease-out both}
-.sp-field{position:absolute;left:0;right:0;bottom:0;width:100%;height:46%;opacity:.22}
-.sp-field path{fill:none;stroke:#f3f6ef;stroke-width:2}
-.sp-main{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:0 24px;animation:sp-up .6s .1s ease-out both}
-.sp-ball{width:min(34vw,148px);height:auto;margin-bottom:14px;filter:drop-shadow(0 12px 24px rgba(0,0,0,.45));animation:sp-spin 1.4s cubic-bezier(.2,.7,.2,1) both}
-.sp-ball .b{fill:#faf8f2}
-.sp-ball .seam{fill:none;stroke:#d23445;stroke-width:3.2;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:100;animation:sp-draw .9s .35s ease-out forwards}
-.sp-ball .st path{fill:none;stroke:#d23445;stroke-width:2.2;stroke-linecap:round;opacity:0;animation:sp-fade .4s .9s forwards}
-.sp-eye{font-size:11px;letter-spacing:.22em;font-weight:700;color:#ffc642}
-.sp-team{font-size:clamp(30px,9vw,46px);font-weight:900;letter-spacing:-.02em;line-height:1.15;word-break:keep-all;text-shadow:0 4px 18px rgba(0,0,0,.4)}
-.sp-sub{font-size:15px;font-weight:600;opacity:.75}
-.sp-foot{position:absolute;bottom:calc(28px + env(safe-area-inset-bottom,0px));font-size:13px;font-weight:600;opacity:.6;animation:sp-fade .6s .6s both}
-@keyframes sp-spin{from{transform:rotate(-200deg) scale(.6);opacity:0}to{transform:none;opacity:1}}
-@keyframes sp-draw{to{stroke-dashoffset:0}}
-@keyframes sp-fade{from{opacity:0}to{opacity:1}}
-@keyframes sp-up{from{transform:translateY(16px);opacity:0}}
-@keyframes sp-glow{from{opacity:0}}
+/* splash — team blue, fixed colours in both themes */
+#splash{position:fixed;inset:0;z-index:100;overflow:hidden;color:#f2f5ff;
+  background:radial-gradient(110% 60% at 50% 18%,#2747a8 0%,#14245e 45%,#070d26 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(18px,4vh,34px);
+  padding-block:calc(24px + env(safe-area-inset-top,0px)) calc(64px + env(safe-area-inset-bottom,0px));transition:opacity .45s ease,transform .45s ease}
+#splash.out{opacity:0;transform:scale(1.03);pointer-events:none}
+.sp-glow{position:absolute;inset:-30% -20% auto;height:70%;background:radial-gradient(closest-side,rgba(120,170,255,.35),transparent);animation:sp-fade 1.2s ease-out both}
+.sp-main{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:0 24px}
+.sp-emblem{width:min(38vw,150px);height:auto;margin-bottom:10px;
+  -webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);
+  animation:sp-pop .7s cubic-bezier(.2,.8,.2,1.15) both}
+.sp-eye{font-size:11px;letter-spacing:.2em;font-weight:700;color:#8fb4ff;animation:sp-up .5s .25s ease-out both}
+.sp-team{font-size:clamp(32px,10vw,50px);font-weight:900;letter-spacing:-.02em;line-height:1.15;word-break:keep-all;text-shadow:0 4px 20px rgba(0,0,0,.45);animation:sp-up .5s .32s ease-out both}
+.sp-sub{font-size:15px;font-weight:600;opacity:.75;animation:sp-up .5s .4s ease-out both}
+.sp-photo{position:relative;width:100%;max-width:720px;overflow:hidden;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 14%,#000 82%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 14%,#000 82%,transparent 100%);animation:sp-fade .7s .2s both}
+.sp-photo img{display:block;width:100%;height:auto;animation:sp-zoom 2.4s ease-out both}
+.sp-foot{position:absolute;bottom:calc(26px + env(safe-area-inset-bottom,0px));font-size:13px;font-weight:600;opacity:.65;animation:sp-fade .6s .6s both}
+@media (orientation:portrait) and (max-width:600px){.sp-photo img{width:138%;max-width:none;margin-left:-19%}}
+@media (orientation:landscape) and (max-height:620px){
+  #splash{flex-direction:row;gap:4vw;padding-inline:max(24px,env(safe-area-inset-left,0px)) max(24px,env(safe-area-inset-right,0px))}
+  .sp-main{flex:0 0 40%;padding:0}.sp-emblem{width:min(22vh,130px)}
+  .sp-photo{flex:1;max-width:none;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 10%,#000 92%,transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 10%,#000 92%,transparent 100%)}}
+@keyframes sp-pop{from{transform:scale(.6);opacity:0}}
+@keyframes sp-fade{from{opacity:0}}
+@keyframes sp-up{from{transform:translateY(12px);opacity:0}}
+@keyframes sp-zoom{from{transform:scale(1.08)}}
 /* lineup */
 .lu{display:flex;flex-direction:column;gap:8px}
 .lrow{display:grid;grid-template-columns:22px minmax(0,1fr) 78px 34px 34px 30px;gap:6px;align-items:center}
@@ -346,22 +350,14 @@ textarea{min-height:240px;font:12.5px/1.55 ui-monospace,Menlo,"Roboto Mono",mono
 
 <div id="root"></div>
 <div id="splash" aria-hidden="true">
-  <div class="sp-lights"></div>
-  <svg class="sp-field" viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice"><path d="M200 292 L362 140 L200 -12 L38 140 Z"/><path d="M200 292 L12 104 M200 292 L388 104"/></svg>
+  <div class="sp-glow"></div>
   <div class="sp-main">
-    <svg class="sp-ball" viewBox="0 0 120 120">
-      <circle cx="60" cy="60" r="52" class="b"/>
-      <path class="seam" d="M30 18 C48 36 48 84 30 102"/>
-      <path class="seam" d="M90 18 C72 36 72 84 90 102"/>
-      <g class="st">
-        <path d="M33 27l8 -3M38 36l8 -2M41 46l8 -1M42 56l8 0M42 66l8 1M40 76l8 2M37 86l8 3M33 95l7 4"/>
-        <path d="M87 27l-8 -3M82 36l-8 -2M79 46l-8 -1M78 56l-8 0M78 66l-8 1M80 76l-8 2M83 86l-8 3M87 95l-7 4"/>
-      </g>
-    </svg>
-    <span class="sp-eye">YOUTH BASEBALL SCOREBOOK</span>
+    <img class="sp-emblem" src="emblem.jpg" alt="">
+    <span class="sp-eye">SUJI DRAGONS · SINCE 2009</span>
     <b class="sp-team" id="spTeam"></b>
     <span class="sp-sub">야구 기록지</span>
   </div>
+  <div class="sp-photo"><img src="team.jpg" alt=""></div>
   <span class="sp-foot">오늘도 즐거운 야구!</span>
 </div>
 <div id="snack" class="snack" hidden role="status" aria-live="polite"><span id="snackMsg"></span><button id="snackBtn" type="button">되돌리기</button></div>
@@ -419,7 +415,7 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let D=null;
-const TEAM_DEFAULT='수지드레곤즈';
+const TEAM_DEFAULT='수지드래곤즈';
 function defaults(){return {v:3,team:TEAM_DEFAULT,innings:6,limit:75,roster:[],games:[],example:false}}
 function seedRoster(){return [['김도윤','SS'],['이준서','CF'],['박시우','P'],['최하준','C'],['정예준','1B'],['강지호','3B'],['윤은우','LF'],['조서진','2B'],['임건우','RF']].map(([name,pos])=>({id:uid(),name,pos}))}
 const blankApp=(inn,pid,name)=>({inn,pid:pid||'',name:name||'',pc:0,st:0,bl:0,bf:0,k:0,bb:0,h:0,r:0,outs:0});
@@ -443,7 +439,7 @@ function migrate(o){
 }
 function load(){
   try{D=JSON.parse(localStorage.getItem(KEY))}catch(e){D=null}
-  if(D&&D.v===3&&Array.isArray(D.games)){if(['청룡 리틀','우리 팀',''].includes(D.team||'')){D.team=TEAM_DEFAULT;save()}return}
+  if(D&&D.v===3&&Array.isArray(D.games)){if(['청룡 리틀','우리 팀','수지드레곤즈',''].includes(D.team||'')){D.team=TEAM_DEFAULT;save()}return}
   D=defaults();
   let old=null;try{old=JSON.parse(localStorage.getItem(OLD))}catch(e){}
   if(old&&old.lineup&&!old.example){try{migrate(old)}catch(e){D=defaults()}}
@@ -1034,7 +1030,7 @@ function splash(){
   let gone=false;const hide=()=>{if(gone)return;gone=true;el.classList.add('out');setTimeout(()=>el.remove(),450)};
   el.addEventListener('click',hide);
   const fast=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  setTimeout(hide,fast?600:1700);
+  setTimeout(hide,fast?800:2200);
 }
 /* ---------- boot ---------- */
 /* 예전 주소(wlsdn6056-cpu.github.io/scorebook/)에서 #move= 로 넘겨준 기록을 받아 합칩니다 */
@@ -1066,7 +1062,7 @@ const moved=takeMove();
 load();
 render();
 splash();
-if(moved)setTimeout(()=>snack(moved),1800);
+if(moved)setTimeout(()=>snack(moved),2300);
 </script>
 
 <script>if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}</script>

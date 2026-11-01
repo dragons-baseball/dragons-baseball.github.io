@@ -1,8 +1,8 @@
 // 오프라인에서도 열리도록 앱 파일을 기기에 저장해 둡니다.
 // 같은 사이트의 PlayBall AI 저장본은 건드리지 않고, 기록지(scorebook-) 저장본만 정리합니다.
-const CACHE = 'scorebook-v6';
+const CACHE = 'scorebook-v7';
 const SHELL = ['./', './index.html', './manifest.webmanifest',
-  './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png'];
+  './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png', './team.jpg', './emblem.jpg'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
