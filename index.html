@@ -423,7 +423,8 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 let D=null;
 const TEAM_DEFAULT='수지드래곤즈';
 function defaults(){return {v:3,team:TEAM_DEFAULT,innings:6,limit:75,roster:[],games:[],example:false}}
-function seedRoster(){return [['김도윤','SS','초6'],['이준서','CF','초6'],['박시우','P','초5'],['최하준','C','초6'],['정예준','1B','초5'],['강지호','3B','초5'],['윤은우','LF','초4'],['조서진','2B','초4'],['임건우','RF','초3']].map(([name,pos,grade])=>({grade,id:uid(),name,pos}))}
+const ROSTER_V=2;
+function seedRoster(){return [['김로하','초2'],['권민율','초2'],['김지환','초2'],['안휘','초2'],['이서진','초2'],['이규원','초3'],['박재희','초3'],['차수인','초3'],['지원재','초3'],['홍규민','초4'],['이지훈','초4'],['정재민','초4']].map(([name,grade])=>({id:uid(),name,pos:'',grade}))}
 const blankApp=(inn,pid,name)=>({inn,pid:pid||'',name:name||'',pc:0,st:0,bl:0,bf:0,k:0,bb:0,h:0,r:0,outs:0});
 function newGame(o={}){return {id:uid(),created:Date.now(),date:o.date||today(),place:o.place||'',opp:o.opp||'상대팀',first:o.first!==false,
   innings:+o.innings||D.innings||6,limit:+o.limit||D.limit||75,status:'live',lineup:[],idx:0,plan:[],apps:[],
@@ -445,11 +446,13 @@ function migrate(o){
 }
 function load(){
   try{D=JSON.parse(localStorage.getItem(KEY))}catch(e){D=null}
-  if(D&&D.v===3&&Array.isArray(D.games)){if(['청룡 리틀','우리 팀','수지드레곤즈',''].includes(D.team||'')){D.team=TEAM_DEFAULT;save()}return}
+  if(D&&D.v===3&&Array.isArray(D.games)){let ch=false;if(['청룡 리틀','우리 팀','수지드레곤즈',''].includes(D.team||'')){D.team=TEAM_DEFAULT;ch=true}
+    if(D.example&&!D.games.length&&(D.rosterV||1)<ROSTER_V){D.roster=seedRoster();D.rosterV=ROSTER_V;ch=true}
+    if(ch)save();return}
   D=defaults();
   let old=null;try{old=JSON.parse(localStorage.getItem(OLD))}catch(e){}
   if(old&&old.lineup&&!old.example){try{migrate(old)}catch(e){D=defaults()}}
-  if(!D.roster.length){D.roster=seedRoster();D.team=TEAM_DEFAULT;D.example=true}
+  if(!D.roster.length){D.roster=seedRoster();D.rosterV=ROSTER_V;D.team=TEAM_DEFAULT;D.example=true}
   save();
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}}
@@ -565,7 +568,7 @@ const dots=(n,max,cls)=>[...Array(max)].map((_,i)=>`<i class="dot ${cls} ${i<n?'
 const chipCls=c=>RES[c].g==='hit'?'hit':RES[c].g==='on'?'on':'out';
 const mmdd=d=>{const m=String(d||'').split('-');return m.length===3?`${+m[1]}.${+m[2]}`:d};
 const rosterOpts=(sel,blank='선택 안 함')=>`<option value="">${blank}</option>`+D.roster.filter(p=>!p.gone||p.id===sel).map(p=>`<option value="${p.id}" ${p.id===sel?'selected':''}>${esc(p.name)}${p.grade?` (${p.grade})`:''}</option>`).join('');
-const GRADES=['','초1','초2','초3','초4','초5','초6','중1','중2','중3'];
+const GRADES=['','초1','초2','초3','초4','초5','초6'];
 const gradeOpts=sel=>GRADES.map(x=>`<option value="${x}" ${x===(sel||'')?'selected':''}>${x||'학년'}</option>`).join('');
 const gtag=p=>p&&p.grade?`<span class="grade">${p.grade}</span>`:'';
 const posOpts=(sel,blank)=>POS.map(p=>`<option value="${p}" ${p===sel?'selected':''}>${p===''&&blank?blank:POSK[p]}</option>`).join('');
@@ -603,7 +606,7 @@ function vHome(){
   let ab=0,h=0;D.games.forEach(g=>g.pa.forEach(x=>{if(RES[x.c].ab)ab++;if(RES[x.c].hit)h++}));
   return appTop(`<div class="ttl"><small>유소년 야구 기록지</small><b>${esc(D.team)}</b></div>`)+`
   <main class="page">
-    ${D.example?`<div class="banner"><span>예시 선수가 들어 있어요. 선수 탭에서 우리 아이들로 바꿔 주세요.</span><button class="chipbtn" data-nav="players">선수 탭</button></div>`:''}
+    ${D.example?`<div class="banner"><span>기본 선수 명단이 들어 있어요. 선수 탭에서 수비 위치를 정하고 바뀐 선수를 고쳐 주세요.</span><button class="chipbtn" data-nav="players">선수 탭</button></div>`:''}
     <section class="season" aria-label="시즌 성적"><div><b>${past.length}</b><span>경기</span></div><div><b>${rec.W}</b><span>승</span></div><div><b>${rec.L}</b><span>패${rec.D?` · ${rec.D}무`:''}</span></div><div><b>${fmtAvg(h,ab)}</b><span>팀 타율</span></div></section>
     ${live.length?`<h2 class="h2">진행 중</h2>${live.map(g=>`<button class="live-card" data-open="${g.id}"><div class="info"><span class="live-dot">${g.inning}회${g.top?'초':'말'}</span><b>vs ${esc(g.opp)}</b><span class="hint">${mmdd(g.date)}${g.place?` · ${esc(g.place)}`:''}</span></div><div class="score">${tot(g,'us')} : ${tot(g,'opp')}</div></button>`).join('')}`:''}
     <h2 class="h2">지난 경기</h2>
@@ -640,7 +643,7 @@ function vPlayers(){
       :`<div class="card empty"><b>아직 투구 기록이 없어요</b><span class="hint">수비 이닝을 기록하면 아이별 투구수와 이닝이 쌓여요.</span></div>`;
   }
   return appTop(`<div class="ttl"><small>${esc(D.team)}</small><b>선수</b></div>`,`<div class="tabs" role="tablist">${[['roster','명단'],['bat','타격'],['pit','투구']].map(([k,l])=>`<button role="tab" data-ptab="${k}" aria-selected="${R.ptab===k}">${l}</button>`).join('')}</div>`)
-    +`<main class="page">${D.example&&R.ptab==='roster'?`<div class="banner"><span>예시 선수예요. 이름을 고치거나 지우고 우리 아이들을 추가하세요.</span><button class="chipbtn" data-act="hideEx">닫기</button></div>`:''}${body}</main>`;
+    +`<main class="page">${D.example&&R.ptab==='roster'?`<div class="banner"><span>기본 명단이에요. 수비 위치를 정하고, 바뀐 선수는 고치거나 추가하세요.</span><button class="chipbtn" data-act="hideEx">닫기</button></div>`:''}${body}</main>`;
 }
 
 function vSettings(){
@@ -991,7 +994,7 @@ document.addEventListener('click',e=>{
     case 'reopen':snap(g);g.status='live';closeSheet();R.tab='live';commit(g,'경기를 다시 진행해요',true);return;
     case 'delAsk':confirmSheet('delGame','이 경기를 삭제할까요?',`vs ${g.opp} (${g.date}) 기록이 모두 지워지고 되돌릴 수 없어요.`,'삭제',true);return;
     case 'wipeAsk':confirmSheet('wipe','모든 기록을 지울까요?','경기와 선수 명단이 모두 지워지고 되돌릴 수 없어요. 먼저 백업 파일을 만들어 두는 걸 권해요.','모두 지우기',true);return;
-    case 'gradeUpAsk':confirmSheet('gradeUp','모든 선수의 학년을 한 칸 올릴까요?','새 시즌용이에요. 초6은 중1, 중3은 그대로 두고 나머지는 한 학년씩 올라가요. 지난 경기 기록은 바뀌지 않아요.','학년 올리기');return;
+    case 'gradeUpAsk':confirmSheet('gradeUp','모든 선수의 학년을 한 칸 올릴까요?','새 시즌용이에요. 한 학년씩 올라가고 초6은 그대로 남아요. 졸업한 선수는 명단에서 빼 주세요. 지난 경기 기록은 바뀌지 않아요.','학년 올리기');return;
     case 'addPlayer':{const n=document.getElementById('newName'),pp=document.getElementById('newPos'),gg=document.getElementById('newGrade'),name=n.value.trim();if(!name){n.focus();snack('이름을 입력해 주세요');return}
       if(players().some(p=>p.name===name)){snack('같은 이름이 있어요. ‘민준A’처럼 구분해 주세요');return}
       R.lastGrade=gg.value;D.roster.push({id:uid(),name,pos:pp.value,grade:gg.value});D.example=false;save();render();const n2=document.getElementById('newName');if(n2)n2.focus();snack(`${name} 선수를 추가했어요`);return}
