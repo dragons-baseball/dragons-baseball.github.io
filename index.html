@@ -234,6 +234,58 @@ select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(
 @keyframes sp-fade{from{opacity:0}}
 @keyframes sp-up{from{transform:translateY(12px);opacity:0}}
 @keyframes sp-zoom{from{transform:scale(1.08)}}
+/* broadcast view — field is always grass green, summary bar always dark */
+.cbar{background:#0f1a36;color:#eef2ff;border-radius:16px;padding:10px 12px;display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:12px;align-items:center}
+.cbar.fin{grid-template-columns:auto minmax(0,1fr)}
+.cb-inn{display:flex;align-items:center;gap:7px;font-weight:900;font-size:22px;padding-right:12px;border-right:1px solid rgba(255,255,255,.14);white-space:nowrap}
+.cbar.fin .cb-inn{font-size:16px}
+.cb-inn .ar{display:flex;flex-direction:column;font-size:10px;line-height:1.05;color:rgba(255,255,255,.28)}
+.cb-inn .ar i{font-style:normal}.cb-inn .ar i.on{color:#ff6b74}
+.cb-mini{width:30px;height:22px}
+.cb-mini rect{fill:none;stroke:rgba(255,255,255,.6);stroke-width:1.2}.cb-mini rect.on{fill:#ffc642;stroke:#ffc642}
+.cb-cnt{display:grid;grid-template-columns:auto auto;gap:3px 6px;align-items:center;font-size:12px;font-weight:800;padding-right:12px;border-right:1px solid rgba(255,255,255,.14)}
+.cb-cnt span{display:flex;gap:4px}
+.cb-cnt i{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.18);display:inline-block}
+.cb-cnt i.b{background:#4cc27c}.cb-cnt i.s{background:#ffc642}.cb-cnt i.o{background:#ff5d6b}
+.cb-pb{display:flex;flex-direction:column;gap:3px;min-width:0;font-weight:800;font-size:14.5px}
+.cb-pb span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cb-pb em{font-style:normal;color:rgba(255,255,255,.45);margin-right:7px;font-size:12.5px}
+.cb-pb small{color:rgba(255,255,255,.7);font-weight:700}
+.cfield{position:relative;width:100%;aspect-ratio:100/87;background:radial-gradient(90% 70% at 50% 85%,#4a8c5c 0%,#3a7a4c 60%,#2f6a40 100%);border-radius:16px;overflow:hidden}
+.cfield svg{position:absolute;inset:0;width:100%;height:100%}
+.cfield .sbase{fill:#fff}.cfield .sbase.on{fill:#ffc642}
+.fl{position:absolute;transform:translate(-50%,-50%);background:#173726;color:#fff;font-size:clamp(11.5px,3.4vw,14px);font-weight:800;padding:4px 9px;border-radius:7px;white-space:nowrap;max-width:34%;overflow:hidden;text-overflow:ellipsis;box-shadow:0 2px 6px rgba(0,0,0,.28);border:0;line-height:1.35;font-family:inherit}
+.fl.run{background:#fff;color:#101a33}
+.fl.bat{background:#fff;color:#101a33;box-shadow:0 0 0 2px #ffc642,0 2px 6px rgba(0,0,0,.28)}
+button.fl{cursor:pointer}
+.cbase{position:absolute;transform:translate(-50%,-50%);width:42px;height:42px;border:0;background:transparent;padding:0;cursor:pointer;border-radius:50%}
+.cbase:active{background:rgba(255,255,255,.18)}
+.ondeck{position:absolute;left:4%;bottom:5%;color:#fff;font-size:clamp(11.5px,3.3vw,13.5px);line-height:1.45;display:flex;flex-direction:column}
+.ondeck span{font-size:11px;opacity:.65;font-weight:700}
+.ondeck b{font-weight:800}
+.clog{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.cchips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.cchips::-webkit-scrollbar{display:none}
+.cchip{flex:none;border:0;background:var(--surface2);color:var(--ink);border-radius:999px;padding:8px 14px;font-size:14px;font-weight:800}
+.cchip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.cchip:disabled{opacity:.35}
+.clog-in{display:flex;flex-direction:column;gap:8px}
+.chalf{font-size:15px;font-weight:800;margin:6px 2px 0}
+.chalf.sm{font-size:12.5px;color:var(--muted);margin:4px 2px -2px}
+.pcard{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:12px;padding:11px 13px;display:flex;flex-direction:column;gap:7px}
+.pcard.hit{border-left-color:var(--ball)}.pcard.on{border-left-color:var(--strike)}.pcard.out{border-left-color:var(--muted)}.pcard.now{border-left-color:var(--seam)}
+.pc-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.pc-top b{font-size:15.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pc-res{font-weight:800;font-size:14px;white-space:nowrap}
+.pc-res.hit{color:var(--ball)}.pc-res.on{color:var(--strike)}.pc-res.out{color:var(--muted)}
+.pc-sub{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.pseq{display:flex;gap:3px;flex-wrap:wrap}
+.pseq i,.prow2 i{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:10.5px;font-weight:800;color:#fff}
+.pseq i.b,.prow2 i.b{background:var(--ball)}.pseq i.s,.prow2 i.s{background:var(--strike)}.pseq i.f,.prow2 i.f{background:var(--muted)}.pseq i.x{background:var(--ink);color:var(--bg)}.pseq i.h{background:var(--out)}
+.plist{display:flex;flex-direction:column;gap:6px;background:var(--bg);border-radius:10px;padding:10px 12px}
+.prow2{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:center;font-size:14px;font-weight:700}
+.prow2 b{font-variant-numeric:tabular-nums;color:var(--muted)}
+.pnote{font-size:12.5px;color:var(--muted);padding:0 4px}
 /* lineup */
 .lu{display:flex;flex-direction:column;gap:8px}
 .lrow{display:grid;grid-template-columns:20px minmax(0,1fr) 72px 34px 26px;gap:6px;align-items:center}
@@ -502,10 +554,10 @@ function result(g,code,pitches){
     if(r.walk)p.bl+=pitches;else p.st+=pitches;
     play.who=`상대 ${p.bf}번째 타자`;play.pitcher=appName(p);msg=`상대 타자 ${r.l}`;
   }
-  let runs=0;
-  if(r.walk){if(b[0]){if(b[1]){if(b[2])runs++;b[2]=1}b[1]=1}b[0]=1}
-  else if(r.base){const n=r.base,nb=[0,0,0];for(let k=2;k>=0;k--)if(b[k]){const t=k+n;if(t>=3)runs++;else nb[t]=1}if(n===4)runs++;else nb[n-1]=1;b.splice(0,3,...nb)}
-  else if(r.fc){b[0]=1}
+  const tok=pa?pa.pid:'o';let runs=0;
+  if(r.walk){if(b[0]){if(b[1]){if(b[2])runs++;b[2]=b[1]}b[1]=b[0]}b[0]=tok}
+  else if(r.base){const n=r.base,nb=[0,0,0];for(let k=2;k>=0;k--)if(b[k]){const t=k+n;if(t>=3)runs++;else nb[t]=b[k]}if(n===4)runs++;else nb[n-1]=tok;b.splice(0,3,...nb)}
+  else if(r.fc){b[0]=tok}
   else if(r.sac){if(b[2])runs++;b[2]=b[1];b[1]=b[0];b[0]=0}
   else if(code==='DP'){b[0]=0}
   const before=g.outs;g.outs+=r.out||0;
@@ -529,14 +581,14 @@ const canUndo=g=>hist.some(h=>h.id===g.id);
 function undo(){const g=G();if(!g)return;for(let k=hist.length-1;k>=0;k--)if(hist[k].id===g.id){const s=hist.splice(k,1)[0];const i=D.games.findIndex(x=>x.id===g.id);D.games[i]=JSON.parse(s.s);save();render();snack('되돌렸어요');buzz(8);return}}
 
 /* ---------- routing (Android back button aware) ---------- */
-let R={screen:'home',gid:null,tab:'live',prep:'lineup',ptab:'roster',exp:'sum',sheet:null,sd:null,tv:false,tvPad:true};
+let R={cinn:null,screen:'home',gid:null,tab:'live',prep:'lineup',ptab:'roster',exp:'sum',sheet:null,sd:null,tv:false,tvPad:true};
 const M=[];let ign=0;
 function pushM(k){try{history.pushState({m:k},'');M.push(k)}catch(e){}}
 function swapM(k){if(!M.length)return pushM(k);try{history.replaceState({m:k},'');M[M.length-1]=k}catch(e){}}
 function popM(n){n=Math.min(n||1,M.length);if(!n)return;M.length-=n;ign++;try{history.go(-n)}catch(e){ign--}}
 const topM=()=>M[M.length-1];
 function setR(p){if(p.screen&&p.screen!==R.screen)hideSnack();Object.assign(R,p);render()}
-function openGame(id,tab){hideSnack();Object.assign(R,{screen:'game',gid:id,tab,sheet:null,sd:null,tv:false});pushM('game');render();scrollTo(0,0)}
+function openGame(id,tab){hideSnack();Object.assign(R,{cinn:null,screen:'game',gid:id,tab,sheet:null,sd:null,tv:false});pushM('game');render();scrollTo(0,0)}
 function goHome(){hideSnack();const n=M.length;Object.assign(R,{screen:'home',gid:null,sheet:null,sd:null,tv:false});leaveFull();popM(n);render();scrollTo(0,0)}
 function openSheet(name,sd){hideSnack();const had=!!R.sheet;R.sheet=name;R.sd=sd||null;if(!had)pushM('sheet');render()}
 function closeSheet(){if(!R.sheet)return;R.sheet=null;R.sd=null;if(topM()==='sheet')popM(1);render()}
@@ -591,15 +643,95 @@ function pitStats(){const m={};const z=()=>({g:new Set(),pc:0,st:0,bl:0,outs:0,b
 const obp=s=>{const d=s.ab+s.bb+s.hbp;return d?((s.h+s.bb+s.hbp)/d).toFixed(3).replace(/^0/,''):'-'};
 
 /* ---------- shared pieces ---------- */
-function lineScore(g){
+function lineScore(g,team){
   const n=Math.max(g.innings,g.inning),cols=[...Array(n)].map((_,i)=>i+1),live=g.status==='live';
-  const name={us:D.team,opp:g.opp};
+  const name={us:team||D.team,opp:g.opp};
   const row=t=>{const isBat=live&&bat(g)===t;return `<tr class="${isBat?'bat':''}"><td class="tm">${esc(name[t])}</td>${cols.map(i=>{const v=g.line[t][i-1];return `<td class="${live&&i===g.inning&&isBat?'now':''}">${v===undefined?'':v}</td>`}).join('')}<td class="r">${tot(g,t)}</td><td>${g.hits[t]}</td><td>${g.errors[t]}</td></tr>`};
   return `<div class="ls"><table><thead><tr><th></th>${cols.map(i=>`<th>${i}</th>`).join('')}<th>R</th><th>H</th><th>E</th></tr></thead><tbody>${(g.first?['us','opp']:['opp','us']).map(row).join('')}</tbody></table></div>`;
 }
 function diamond(g,interactive){
   const base=(k,x,y)=>`<g class="base ${g.bases[k]?'on':''}" ${interactive?`data-base="${k}" role="button" tabindex="0" aria-label="${k+1}루 주자 ${g.bases[k]?'있음':'없음'}"`:''}><circle class="hit" cx="${x}" cy="${y}" r="24"/><rect x="${x-13}" y="${y-13}" width="26" height="26" rx="3" transform="rotate(45 ${x} ${y})"/></g>`;
   return `<svg class="dia" viewBox="0 0 160 140" aria-label="주자 상황"><path class="path" d="M80 122 L136 68 L80 16 L24 68 Z"/>${base(1,80,16)}${base(0,136,68)}${base(2,24,68)}<polygon class="home" points="71,114 89,114 89,122 80,130 71,122"/></svg>`;
+}
+/* ---------- broadcast view (shared by recorder and viewers) ---------- */
+const ctxApp=g=>({g,team:D.team,nm:id=>pname(id)});
+const runName=(C,v)=>typeof v==='string'&&v!=='o'?C.nm(v):'주자';
+function appNow(g){for(let k=g.apps.length-1;k>=0;k--)if(g.apps[k].inn===g.inning)return g.apps[k];return {pid:planFor(g,g.inning),pc:0,bf:0}}
+const apName=(C,a)=>a.pid?C.nm(a.pid):(a.name||'투수 미정');
+const FPOS={C:[50,80],'1B':[79,45],'2B':[63,29],SS:[37,29],'3B':[21,45],LF:[17,17],CF:[50,10],RF:[83,17]};
+const BASEXY=[[68,54],[50,36],[32,54]];
+const pct=([x,y])=>`left:${x}%;top:${(y/87*100).toFixed(2)}%`;
+function vCastBar(C){
+  const g=C.g,us=bat(g)==='us',fin=g.status!=='live',a=appNow(g),B=curBatter(g);
+  const mini=`<svg class="cb-mini" viewBox="0 0 30 22">${[[22,11],[15,4],[8,11]].map(([x,y],k)=>`<rect x="${x-3.6}" y="${y-3.6}" width="7.2" height="7.2" rx="1" transform="rotate(45 ${x} ${y})" class="${g.bases[k]?'on':''}"/>`).join('')}</svg>`;
+  const pLine=us?'<em>P</em>상대 투수':`<em>P</em>${esc(apName(C,a))} <small>${kidPitches(g,a.pid)}구</small>`;
+  const bLine=us?`<em>B</em>${B?esc(C.nm(B.pid)):'-'}`:`<em>B</em>상대 ${(a.bf||0)+1}번째`;
+  if(fin)return `<div class="cbar fin"><span class="cb-inn">경기 종료</span><span class="cb-pb"><span>${esc(C.team)} ${tot(g,'us')} : ${tot(g,'opp')} ${esc(g.opp)}</span></span></div>`;
+  return `<div class="cbar"><span class="cb-inn"><span class="ar"><i class="${g.top?'on':''}">▲</i><i class="${g.top?'':'on'}">▼</i></span>${g.inning}회${mini}</span>
+    <span class="cb-cnt"><b>B</b><span>${[0,1,2].map(i=>`<i class="${i<g.balls?'b':''}"></i>`).join('')}</span><b>S</b><span>${[0,1].map(i=>`<i class="${i<g.strikes?'s':''}"></i>`).join('')}</span><b>O</b><span>${[0,1].map(i=>`<i class="${i<g.outs?'o':''}"></i>`).join('')}</span></span>
+    <span class="cb-pb"><span>${pLine}</span><span>${bLine}</span></span></div>`;
+}
+function vField(C,interactive){
+  const g=C.g,us=bat(g)==='us',live=g.status==='live';let h='';
+  if(live&&!us){
+    const a=appNow(g);h+=`<span class="fl" style="${pct([50,55])}">${esc(apName(C,a))}</span>`;
+    const seen=new Set();g.lineup.forEach(l=>{if(FPOS[l.pos]&&!seen.has(l.pos)&&l.pid!==a.pid){seen.add(l.pos);h+=`<span class="fl" style="${pct(FPOS[l.pos])}">${esc(C.nm(l.pid))}</span>`}});
+  }
+  if(live){
+    g.bases.forEach((v,k)=>{
+      if(v)h+=interactive?`<button class="fl run" style="${pct(BASEXY[k])}" data-base="${k}" aria-label="${k+1}루 주자 ${esc(runName(C,v))}, 누르면 지워요">${esc(runName(C,v))}</button>`:`<span class="fl run" style="${pct(BASEXY[k])}">${esc(runName(C,v))}</span>`;
+      else if(interactive)h+=`<button class="cbase" style="${pct(BASEXY[k])}" data-base="${k}" aria-label="${k+1}루에 주자 놓기"></button>`;
+    });
+    const B=curBatter(g);
+    const bn=us?(B?C.nm(B.pid):''):`상대 ${(appNow(g).bf||0)+1}번째`;
+    if(bn)h+=`<span class="fl bat" style="${pct([50,70])}">${esc(bn)}</span>`;
+    if(us&&g.lineup.length>1){const n=g.lineup.length,i=g.idx%n;
+      h+=`<div class="ondeck"><span>대기 타석</span>${[1,2,3].filter(d=>d<n).map(d=>{const j=(i+d)%n;return `<b>${j+1}.${esc(C.nm(g.lineup[j].pid))}</b>`}).join('')}</div>`}
+  }
+  const occ=k=>g.bases[k]&&live?' on':'';
+  return `<div class="cfield"><svg viewBox="0 0 100 87" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M3 25 Q50 -16 97 25" fill="none" stroke="rgba(255,255,255,.14)" stroke-width=".5"/>
+    <path d="M50 31 L73 54 L50 77 L27 54 Z" fill="#b99c74"/><path d="M50 41 L63 54 L50 67 L37 54 Z" fill="#3c7d4e"/>
+    <circle cx="50" cy="55" r="3.3" fill="#b99c74"/>
+    <path d="M50 72 L0 22 M50 72 L100 22" stroke="rgba(255,255,255,.75)" stroke-width=".45"/>
+    ${BASEXY.map(([x,y],k)=>`<rect class="sbase${occ(k)}" x="${x-1.6}" y="${y-1.6}" width="3.2" height="3.2" transform="rotate(45 ${x} ${y})"/>`).join('')}
+    <path d="M48.3 71 h3.4 v1.6 l-1.7 1.6 l-1.7 -1.6 Z" fill="#fff"/></svg>${h}</div>`;
+}
+const SEQC={B:'b',S:'s',F:'f',X:'x',H:'h'};
+function seqDots(seq){return `<span class="pseq">${[...(seq||'')].map((c,i)=>`<i class="${SEQC[c]||'f'}" title="${SEQ[c]||''}">${i+1}</i>`).join('')}</span>`}
+function seqRows(seq){let b=0,s=0;const rows=[...(seq||'')].map((c,i)=>{if(c==='B')b++;else if(c==='S')s++;else if(c==='F'&&s<2)s++;return `<div class="prow2"><i class="${SEQC[c]}">${i+1}</i><span>${{B:'볼',S:'스트라이크',F:'파울'}[c]||''}</span><b>${b}-${s}</b></div>`});return rows.reverse().join('')}
+function playCard(C,p){
+  if(p.note)return `<div class="pnote">· ${esc(p.note)}</div>`;
+  const r=RES[p.c],cls=r.g==='hit'?'hit':r.g==='on'?'on':'out';
+  const who=p.side==='us'?`${p.slot}번 ${esc(p.who)}`:esc(p.who);
+  const vs=p.pitcher?` · 투수 ${esc(p.pitcher)}`:'';
+  return `<div class="pcard ${cls}"><div class="pc-top"><b>${who}</b><span class="pc-res ${cls}">${r.l}${p.runs?` · ${p.runs}점`:''}</span></div>
+    <div class="pc-sub">${seqDots(p.seq)}<span>${p.outs}아웃 · ${p.score[0]}:${p.score[1]}${vs}</span></div></div>`;
+}
+function vLog(C,sel){
+  const g=C.g,n=Math.max(g.innings,g.inning),live=g.status==='live';
+  const cur=sel==null?(g.plays.length||live?g.inning:1):sel;
+  const chips=`<div class="cchips" role="tablist"><button class="cchip" data-cinn="R" aria-pressed="${cur==='R'}">득점</button>${[...Array(n)].map((_,i)=>{const k=i+1;return `<button class="cchip" data-cinn="${k}" aria-pressed="${cur===k}" ${k>g.inning?'disabled':''}>${k}회</button>`}).join('')}</div>`;
+  let body='';
+  if(cur==='R'){
+    const sc=g.plays.filter(p=>!p.note&&p.runs).reverse();
+    body=sc.length?sc.map(p=>`<div class="chalf sm">${half(p.inn,p.top)}</div>${playCard(C,p)}`).join(''):'<p class="hint">아직 점수가 난 타석이 없어요.</p>';
+  }else{
+    const halves=[true,false].filter(t=>g.plays.some(p=>p.inn===cur&&p.top===t)||(live&&cur===g.inning&&g.top===t)).reverse();
+    body=halves.map(t=>{
+      const side=(t===!!g.first)?'us':'opp',title=side==='us'?`${esc(C.team)} 공격`:`${esc(g.opp)} 공격`;
+      let inner='';
+      if(live&&cur===g.inning&&g.top===t){
+        const B=curBatter(g),a=appNow(g);
+        const nm=side==='us'?(B?`${B.i+1}번 ${esc(C.nm(B.pid))}`:'타자'):`상대 ${(a.bf||0)+1}번째 타자`;
+        inner+=`<div class="pcard now"><div class="pc-top"><b>${nm}</b><span class="pc-res">${g.balls}볼 ${g.strikes}스트라이크</span></div>
+          <div class="pc-sub"><span>타석 진행 중${side==='opp'?` · 투수 ${esc(apName(C,a))}`:''}</span></div>${g.cur?`<div class="plist">${seqRows(g.cur)}</div>`:''}</div>`;
+      }
+      inner+=g.plays.filter(p=>p.inn===cur&&p.top===t).reverse().map(p=>playCard(C,p)).join('');
+      return `<div class="chalf">${cur}회${t?'초':'말'} ${title}</div>${inner||'<p class="hint">아직 기록이 없어요.</p>'}`;
+    }).join('')||'<p class="hint">이 이닝은 아직 기록이 없어요.</p>';
+  }
+  return `<section class="clog">${chips}<div class="clog-in">${body}</div></section>`;
 }
 const appTop=(inner,tabs)=>`<div class="top"><header class="appbar">${inner}</header>${tabs||''}</div>`;
 
@@ -730,7 +862,7 @@ function vLive(g){
   return `
     ${regDone?`<div class="banner warn"><span>정규 ${g.innings}이닝이 끝났어요. 연장이면 계속 기록하세요.</span><button class="chipbtn" data-act="endAsk">경기 종료</button></div>`:''}
     <section class="board"><div class="bhead"><span class="inn">${g.inning}회 ${g.top?'초':'말'}<span class="mode ${us?'atk':'dfn'}">${us?'공격':'수비'}</span></span></div>${lineScore(g)}</section>
-    <section class="card sit">${diamond(g,true)}<div class="cnt"><div><span>B</span>${dots(g.balls,3,'b')}</div><div><span>S</span>${dots(g.strikes,2,'s')}</div><div><span>O</span>${dots(g.outs,2,'o')}</div></div></section>
+    ${vCastBar(ctxApp(g))}${vField(ctxApp(g),true)}
     ${who}
     ${pitcherBlock(g)}
     <div class="quick">
@@ -740,7 +872,8 @@ function vLive(g){
       ${us?'<button class="chipbtn" data-act="skip">타석 건너뛰기</button>':'<button class="chipbtn" data-sheet="relief">투수 교체</button>'}
       <button class="chipbtn" data-act="endHalf">공수 교대</button>
     </div>
-    <p class="hint">안타·볼넷 때 주자는 자동으로 진루해요. 도루나 견제사는 베이스를 눌러 고치고 득점·아웃 버튼으로 맞추세요.</p>`;
+    <p class="hint">안타·볼넷 때 주자는 이름과 함께 자동으로 진루해요. 도루는 빈 베이스를 누르면 앞 주자가 옮겨 가고, 주자 이름을 누르면 지워져요. 점수와 아웃은 버튼으로 맞추세요.</p>
+    ${vLog(ctxApp(g),R.cinn)}`;
 }
 
 function vPrep(g){
@@ -958,9 +1091,11 @@ async function shareFile(file){
 let pendingImport=null;
 
 document.addEventListener('click',e=>{
-  const el=e.target.closest('[data-goplan],[data-prep],[data-nav],[data-open],[data-tab],[data-ptab],[data-pitch],[data-res],[data-sheet],[data-act],[data-base],[data-relief],[data-confirm],[data-exp],[data-mv],[data-lrm],[data-pdel]');
+  const el=e.target.closest('[data-cinn],[data-goplan],[data-prep],[data-nav],[data-open],[data-tab],[data-ptab],[data-pitch],[data-res],[data-sheet],[data-act],[data-base],[data-relief],[data-confirm],[data-exp],[data-mv],[data-lrm],[data-pdel]');
   if(!el)return;
-  const ds=el.dataset,g=G();
+  const ds=el.dataset;
+  if(ds.cinn){setR({cinn:ds.cinn==='R'?'R':+ds.cinn});return}
+  const g=G();
   if(ds.nav!==undefined){setR({screen:ds.nav,gid:null,sheet:null,tv:false});scrollTo(0,0);return}
   if(ds.open){const x=D.games.find(y=>y.id===ds.open);openGame(ds.open,x&&x.status==='final'?'sheet':'live');if(x&&x.status==='live')keepAwake();return}
   if(ds.tab){if(R.sheet)closeSheet();setR({tab:ds.tab});scrollTo(0,0);return}
@@ -971,7 +1106,7 @@ document.addEventListener('click',e=>{
   if(ds.pitch)return pitch(ds.pitch);
   if(ds.res)return tapResult(ds.res);
   if(ds.sheet){if(ds.sheet==='result'&&g&&!defending(g)&&!g.lineup.length){snack('준비 탭에서 타순을 먼저 정해 주세요');return}openSheet(ds.sheet);return}
-  if(ds.base!==undefined)return act(x=>{const k=+ds.base;x.bases[k]=x.bases[k]?0:1;buzz(8);return null});
+  if(ds.base!==undefined)return act(x=>{const k=+ds.base;if(x.bases[k])x.bases[k]=0;else if(k>0&&x.bases[k-1]){x.bases[k]=x.bases[k-1];x.bases[k-1]=0}else x.bases[k]=1;buzz(8);return null});
   if(ds.relief){const pid=ds.relief;snap(g);g.apps.push(blankApp(g.inning,pid));note(g,`투수 교체 → ${pname(pid)}`);save();closeSheet();snack(`투수 교체: ${pname(pid)}`,true);return}
   if(ds.mv){const [i,d]=ds.mv.split(',').map(Number),j=i+d;if(j<0||j>=g.lineup.length)return;act(x=>{const L=x.lineup;[L[i],L[j]]=[L[j],L[i]];return null});return}
   if(ds.lrm!==undefined){act(x=>{const i=+ds.lrm,cur=x.idx%Math.max(1,x.lineup.length);x.lineup.splice(i,1);if(x.lineup.length&&i<cur)x.idx--;if(x.idx<0)x.idx=0;return '타순에서 뺐어요'});return}
