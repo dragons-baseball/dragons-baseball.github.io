@@ -207,6 +207,29 @@ select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(
 .ps.now{border-color:var(--seam);background:var(--seam-soft)}
 .ps.now span{color:var(--seam)}
 .ps.done{opacity:.55}
+/* splash — a night-game look, fixed colors in both themes */
+#splash{position:fixed;inset:0;z-index:100;overflow:hidden;background:radial-gradient(120% 70% at 50% 0%,#2a6a47 0%,#123524 45%,#07170f 100%);color:#f3f6ef;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s ease,transform .4s ease}
+#splash.out{opacity:0;transform:scale(1.04);pointer-events:none}
+.sp-lights{position:absolute;inset:-20% -10% auto;height:70%;background:
+  radial-gradient(closest-side,rgba(255,244,200,.35),transparent) 12% 0/38% 60% no-repeat,
+  radial-gradient(closest-side,rgba(255,244,200,.35),transparent) 88% 0/38% 60% no-repeat;filter:blur(6px);animation:sp-glow 1.6s ease-out both}
+.sp-field{position:absolute;left:0;right:0;bottom:0;width:100%;height:46%;opacity:.22}
+.sp-field path{fill:none;stroke:#f3f6ef;stroke-width:2}
+.sp-main{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:0 24px;animation:sp-up .6s .1s ease-out both}
+.sp-ball{width:min(34vw,148px);height:auto;margin-bottom:14px;filter:drop-shadow(0 12px 24px rgba(0,0,0,.45));animation:sp-spin 1.4s cubic-bezier(.2,.7,.2,1) both}
+.sp-ball .b{fill:#faf8f2}
+.sp-ball .seam{fill:none;stroke:#d23445;stroke-width:3.2;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:100;animation:sp-draw .9s .35s ease-out forwards}
+.sp-ball .st path{fill:none;stroke:#d23445;stroke-width:2.2;stroke-linecap:round;opacity:0;animation:sp-fade .4s .9s forwards}
+.sp-eye{font-size:11px;letter-spacing:.22em;font-weight:700;color:#ffc642}
+.sp-team{font-size:clamp(30px,9vw,46px);font-weight:900;letter-spacing:-.02em;line-height:1.15;word-break:keep-all;text-shadow:0 4px 18px rgba(0,0,0,.4)}
+.sp-sub{font-size:15px;font-weight:600;opacity:.75}
+.sp-foot{position:absolute;bottom:calc(28px + env(safe-area-inset-bottom,0px));font-size:13px;font-weight:600;opacity:.6;animation:sp-fade .6s .6s both}
+@keyframes sp-spin{from{transform:rotate(-200deg) scale(.6);opacity:0}to{transform:none;opacity:1}}
+@keyframes sp-draw{to{stroke-dashoffset:0}}
+@keyframes sp-fade{from{opacity:0}to{opacity:1}}
+@keyframes sp-up{from{transform:translateY(16px);opacity:0}}
+@keyframes sp-glow{from{opacity:0}}
 /* lineup */
 .lu{display:flex;flex-direction:column;gap:8px}
 .lrow{display:grid;grid-template-columns:22px minmax(0,1fr) 78px 34px 34px 30px;gap:6px;align-items:center}
@@ -322,6 +345,25 @@ textarea{min-height:240px;font:12.5px/1.55 ui-monospace,Menlo,"Roboto Mono",mono
 <body>
 
 <div id="root"></div>
+<div id="splash" aria-hidden="true">
+  <div class="sp-lights"></div>
+  <svg class="sp-field" viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice"><path d="M200 292 L362 140 L200 -12 L38 140 Z"/><path d="M200 292 L12 104 M200 292 L388 104"/></svg>
+  <div class="sp-main">
+    <svg class="sp-ball" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="52" class="b"/>
+      <path class="seam" d="M30 18 C48 36 48 84 30 102"/>
+      <path class="seam" d="M90 18 C72 36 72 84 90 102"/>
+      <g class="st">
+        <path d="M33 27l8 -3M38 36l8 -2M41 46l8 -1M42 56l8 0M42 66l8 1M40 76l8 2M37 86l8 3M33 95l7 4"/>
+        <path d="M87 27l-8 -3M82 36l-8 -2M79 46l-8 -1M78 56l-8 0M78 66l-8 1M80 76l-8 2M83 86l-8 3M87 95l-7 4"/>
+      </g>
+    </svg>
+    <span class="sp-eye">YOUTH BASEBALL SCOREBOOK</span>
+    <b class="sp-team" id="spTeam"></b>
+    <span class="sp-sub">야구 기록지</span>
+  </div>
+  <span class="sp-foot">오늘도 즐거운 야구!</span>
+</div>
 <div id="snack" class="snack" hidden role="status" aria-live="polite"><span id="snackMsg"></span><button id="snackBtn" type="button">되돌리기</button></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
 
@@ -377,14 +419,15 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let D=null;
-function defaults(){return {v:3,team:'우리 팀',innings:6,limit:75,roster:[],games:[],example:false}}
+const TEAM_DEFAULT='수지드레곤즈';
+function defaults(){return {v:3,team:TEAM_DEFAULT,innings:6,limit:75,roster:[],games:[],example:false}}
 function seedRoster(){return [['김도윤','SS'],['이준서','CF'],['박시우','P'],['최하준','C'],['정예준','1B'],['강지호','3B'],['윤은우','LF'],['조서진','2B'],['임건우','RF']].map(([name,pos])=>({id:uid(),name,pos}))}
 const blankApp=(inn,pid,name)=>({inn,pid:pid||'',name:name||'',pc:0,st:0,bl:0,bf:0,k:0,bb:0,h:0,r:0,outs:0});
 function newGame(o={}){return {id:uid(),created:Date.now(),date:o.date||today(),place:o.place||'',opp:o.opp||'상대팀',first:o.first!==false,
   innings:+o.innings||D.innings||6,limit:+o.limit||D.limit||75,status:'live',lineup:[],idx:0,plan:[],apps:[],
   inning:1,top:true,balls:0,strikes:0,outs:0,bases:[0,0,0],line:{us:[],opp:[]},hits:{us:0,opp:0},errors:{us:0,opp:0},pa:[],plays:[],cur:''}}
 function migrate(o){
-  D.team=o.info?.us||'우리 팀';D.innings=+o.info?.innings||6;D.limit=+o.info?.limit||75;
+  D.team=(o.info?.us&&!['청룡 리틀','우리 팀'].includes(o.info.us))?o.info.us:TEAM_DEFAULT;D.innings=+o.info?.innings||6;D.limit=+o.info?.limit||75;
   const by={};
   D.roster=(o.lineup||[]).map(p=>{const r={id:uid(),name:p.name,pos:p.pos||''};by[p.name]=r.id;return r});
   const pidOf=n=>{if(!n||n==='투수 미정')return '';if(!by[n]){const r={id:uid(),name:n,pos:'P'};D.roster.push(r);by[n]=r.id}return by[n]};
@@ -400,11 +443,11 @@ function migrate(o){
 }
 function load(){
   try{D=JSON.parse(localStorage.getItem(KEY))}catch(e){D=null}
-  if(D&&D.v===3&&Array.isArray(D.games))return;
+  if(D&&D.v===3&&Array.isArray(D.games)){if(['청룡 리틀','우리 팀',''].includes(D.team||'')){D.team=TEAM_DEFAULT;save()}return}
   D=defaults();
   let old=null;try{old=JSON.parse(localStorage.getItem(OLD))}catch(e){}
   if(old&&old.lineup&&!old.example){try{migrate(old)}catch(e){D=defaults()}}
-  if(!D.roster.length){D.roster=seedRoster();D.team='청룡 리틀';D.example=true}
+  if(!D.roster.length){D.roster=seedRoster();D.team=TEAM_DEFAULT;D.example=true}
   save();
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}}
@@ -984,6 +1027,15 @@ function onField(e){
 document.addEventListener('input',onField);
 document.addEventListener('change',onField);
 
+/* ---------- splash ---------- */
+function splash(){
+  const el=document.getElementById('splash');if(!el)return;
+  document.getElementById('spTeam').textContent=D.team||TEAM_DEFAULT;
+  let gone=false;const hide=()=>{if(gone)return;gone=true;el.classList.add('out');setTimeout(()=>el.remove(),450)};
+  el.addEventListener('click',hide);
+  const fast=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  setTimeout(hide,fast?600:1700);
+}
 /* ---------- boot ---------- */
 /* 예전 주소(wlsdn6056-cpu.github.io/scorebook/)에서 #move= 로 넘겨준 기록을 받아 합칩니다 */
 function takeMove(){
@@ -1013,7 +1065,8 @@ function takeMove(){
 const moved=takeMove();
 load();
 render();
-if(moved)snack(moved);
+splash();
+if(moved)setTimeout(()=>snack(moved),1800);
 </script>
 
 <script>if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}</script>
