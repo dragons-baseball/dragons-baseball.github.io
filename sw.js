@@ -1,6 +1,6 @@
 // 오프라인에서도 열리도록 앱 파일을 기기에 저장해 둡니다.
 // 같은 사이트의 PlayBall AI 저장본은 건드리지 않고, 기록지(scorebook-) 저장본만 정리합니다.
-const CACHE = 'scorebook-v12';
+const CACHE = 'scorebook-v13';
 const SHELL = ['./', './index.html', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png', './team.jpg', './emblem.jpg'];
 
@@ -18,6 +18,11 @@ self.addEventListener('fetch', e => {
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).then(r => { const cp = r.clone(); caches.open(CACHE).then(c => c.put('./index.html', cp)); return r; })
       .catch(() => caches.match('./index.html')));
+    return;
+  }
+  // 경기 준비 파일: 항상 최신 먼저
+  if (new URL(req.url).pathname.includes('/plans/')) {
+    e.respondWith(fetch(req).catch(() => caches.match(req)));
     return;
   }
   // 아이콘·글꼴 등: 저장본 먼저, 없으면 받아서 저장
